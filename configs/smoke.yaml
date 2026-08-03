@@ -1,0 +1,65 @@
+experiment:
+  name: smoke
+  output_dir: outputs/smoke
+  seed: 23
+  deterministic: true
+
+data:
+  manifest: data/processed/smoke_manifest.json
+  train_manifest: data/processed/smoke_train.json
+  image_size: 256
+  dvae_target_size: 128
+  num_workers: 0
+  micro_batch_size: 1
+  logical_batch_size: 1
+  pin_memory: false
+
+debug:
+  tiny_model: true
+  tiny_image_size: 32
+
+model:
+  clip_model: ViT-B-16
+  clip_pretrained: openai
+  embed_dim: 512
+  image_mask_ratio: 0.40
+  text_mask_ratio: 0.15
+  mii:
+    enabled: true
+    hidden_dim: 512
+    heads: 8
+    layers: 1
+    visual_vocab_size: 8192
+    text_vocab_size: 49408
+    gradient_checkpointing: false
+  dvae:
+    backend: deterministic
+    encoder_path: data/cache/dvae/encoder.pkl
+    auto_download: false
+    allow_deterministic_fallback: true
+  dcl:
+    enabled: true
+    momentum: 0.99
+    temperature: 0.02
+    queue_sizes: {rsicd: 8, rsitmd: 8, ucm: 8}
+  bdm: {enabled: true}
+  loss_weights: {mii: 1.0, dcl: 1.0, bdm: 1.0}
+
+training:
+  epochs: 1
+  pretrained_lr: 0.00001
+  new_module_lr: 0.00005
+  weight_decay: 0.0001
+  warmup_epochs: 0
+  warmup_start_lr: 0.000001
+  min_lr: 0.000001
+  amp: false
+  grad_clip_norm: 1.0
+  checkpoint_every_epochs: 1
+  validate_every_epochs: 1
+  resume: null
+
+evaluation:
+  batch_size: 4
+  datasets: [rsicd, rsitmd, ucm]
+  report_dir: reports

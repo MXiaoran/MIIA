@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.venv/
+venv/
+
+# Local data, experiment artifacts, and logs
+data/*
+!data/README.md
+outputs/
+checkpoints/
+reports/
+logs/
+wandb/
+
+# Model weights, serialized states, and downloaded archives
+*.pth
+*.pt
+*.ckpt
+*.pkl
+*.pickle
+*.safetensors
+*.onnx
+*.bin
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.tgz
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local-only run overrides
+configs/*_local.yaml
+configs/*_run.yaml

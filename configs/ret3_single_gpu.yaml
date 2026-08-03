@@ -1,0 +1,70 @@
+experiment:
+  name: ret3_miia_vit_b16_seed23
+  output_dir: outputs/ret3_miia_vit_b16_seed23
+  seed: 23
+  deterministic: false
+
+data:
+  manifest: data/processed/ret3_manifest.json
+  train_manifest: data/processed/ret3_train.json
+  image_size: 256
+  dvae_target_size: 128
+  num_workers: 4
+  micro_batch_size: 8
+  logical_batch_size: 64
+  # Windows + WDDM can raise "CUDA resource already mapped" from the
+  # DataLoader pin-memory thread; pageable transfers are stable on this host.
+  pin_memory: false
+
+model:
+  clip_model: ViT-B-16
+  clip_pretrained: openai
+  embed_dim: 512
+  image_mask_ratio: 0.40
+  text_mask_ratio: 0.15
+  mii:
+    enabled: true
+    hidden_dim: 512
+    heads: 8
+    layers: 4
+    visual_vocab_size: 8192
+    text_vocab_size: 49408
+    gradient_checkpointing: true
+  dvae:
+    backend: dall_e
+    encoder_path: data/cache/dvae/encoder.pkl
+    auto_download: true
+    allow_deterministic_fallback: false
+  dcl:
+    enabled: true
+    momentum: 0.99
+    temperature: 0.02
+    queue_sizes:
+      rsicd: 1200
+      rsitmd: 800
+      ucm: 400
+  bdm:
+    enabled: true
+  loss_weights:
+    mii: 1.0
+    dcl: 1.0
+    bdm: 1.0
+
+training:
+  epochs: 60
+  pretrained_lr: 0.00001
+  new_module_lr: 0.00005
+  weight_decay: 0.0001
+  warmup_epochs: 5
+  warmup_start_lr: 0.000001
+  min_lr: 0.000001
+  amp: true
+  grad_clip_norm: 1.0
+  checkpoint_every_epochs: 1
+  validate_every_epochs: 1
+  resume: null
+
+evaluation:
+  batch_size: 128
+  datasets: [rsicd, rsitmd, ucm]
+  report_dir: reports
