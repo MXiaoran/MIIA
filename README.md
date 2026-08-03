@@ -1,4 +1,4 @@
-# MIIA Remote-Sensing Image-Text Retrieval Reproduction
+# MIIA Remote-Sensing Image-Text Retrieval 
 
 ## Environment
 
